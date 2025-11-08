@@ -22,10 +22,10 @@ resource "google_container_cluster" "primary" {
   }
 
   master_authorized_networks_config {
-    cidr_blocks = [{
+    cidr_blocks {
       cidr_block   = "0.0.0.0/0"
-      display_name = "public-access"
-    }]
+      display_name = "private access"
+    }
   }
 
   # Node Auto-Provisioning (NAP)
@@ -35,7 +35,7 @@ resource "google_container_cluster" "primary" {
     resource_limits {
       resource_type = "cpu"
       minimum       = 1
-      maximum       = 50
+      maximum       = 30
     }
 
     resource_limits {
@@ -45,17 +45,17 @@ resource "google_container_cluster" "primary" {
     }
 
     auto_provisioning_defaults {
-      service_account = "default"
-      oauth_scopes = [
+    service_account = "default"
+    oauth_scopes = [
         "https://www.googleapis.com/auth/cloud-platform"
       ]
-      boot_disk_kms_key = null
-      disk_size_gb      = 100
-      disk_type         = "pd-standard"
-      min_cpu_platform  = "AUTOMATIC"
-      shielded_instance_config {
-        enable_secure_boot = true
-      }
+    boot_disk_kms_key = null
+    disk_size    = 100
+    disk_type         = "pd-standard"
+    min_cpu_platform  = "AUTOMATIC"
+    shielded_instance_config {
+    enable_secure_boot = true
+    }
     }
   }
 
@@ -81,7 +81,7 @@ resource "google_container_node_pool" "pools" {
     disk_size_gb = each.value.disk_size_gb
     labels       = each.value.labels
     oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
-    tags         = ["gke-node"]
+    tags         = ["gke-node-dev"]
   }
 
   autoscaling {

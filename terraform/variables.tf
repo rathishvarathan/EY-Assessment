@@ -1,10 +1,16 @@
-variable "project_defaults" {
-  description = "Default settings for the project"
-  type = map(any)
-  default = {
-    project_id       = "my-gcp-project"
-    region           = "us-central1"
-    zone              = "us-central1-a"
-    cluster_name      = "gke-standard-private"
-  }
+variable "project_id" {
+  description = "GCP project ID where resources will be created"
+  type        = string
+}
+
+variable "region" {
+  description = "GCP region for resources"
+  type        = string
+  default     = "us-central1"
+}
+
+variable "cluster_name" {
+  description = "Name of the GKE cluster"
+  type        = string
+  default     = "gke-standard-private"
 }
