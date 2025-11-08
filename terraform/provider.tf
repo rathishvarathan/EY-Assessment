@@ -9,8 +9,8 @@ terraform {
   }
 
   backend "gcs" {
-    bucket = "my-terraform-state-bucket"
-    prefix = "ey-assessment/terraform/state"
+    bucket = "my-terraform-state-bucket-ey"
+    prefix = "terraform/state"
   }
 }
 

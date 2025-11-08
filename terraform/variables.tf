@@ -1,6 +1,8 @@
 variable "project_id" {
   description = "GCP project ID where resources will be created"
   type        = string
+  default     ="sinuous-origin-477316-k7"
+
 }
 
 variable "region" {
