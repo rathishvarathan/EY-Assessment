@@ -14,7 +14,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git 'https://github.com/<your-username>/<your-repo>.git'
+        git 'https://github.com/rathishvarathan/EY-Assessment.git'
       }
     }
 
@@ -57,10 +57,10 @@ pipeline {
 
   post {
     success {
-      echo "✅ Blue-Green Deployment Successful"
+      echo "Blue-Green Deployment Successful"
     }
     failure {
-      echo "❌ Deployment failed. Rolling back to blue."
+      echo "Deployment failed. Rolling back to blue."
       sh "kubectl patch service ${SERVICE} -p '{\"spec\":{\"selector\":{\"app\":\"nginx\",\"version\":\"blue\"}}}'"
     }
   }
