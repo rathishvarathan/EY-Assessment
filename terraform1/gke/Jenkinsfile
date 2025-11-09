@@ -5,7 +5,7 @@ pipeline {
     PROJECT          = "sinuous-origin-477316-k7"
     ZONE             = "us-central1-a"
     CLUSTER          = "gke-demo-cluster"
-    DEPLOYMENT_BLUE  = "nginx-blue"
+    DEPLOYMENT_BLUE  = "nginx-deployment"
     DEPLOYMENT_GREEN = "nginx-green"
     SERVICE          = "nginx-service-ey"
     IMAGE            = "nginx:1.25.3"
