@@ -37,7 +37,7 @@ pipeline {
     stage('Deploy Green') {
       steps {
         sh """
-          kubectl apply -f gke/deployment-green.yaml
+          kubectl apply -f terraform1/gke/deployment-green.yaml
           kubectl scale deployment/${DEPLOYMENT_GREEN} --replicas=2
           kubectl rollout status deployment/${DEPLOYMENT_GREEN}
         """
