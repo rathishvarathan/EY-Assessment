@@ -17,7 +17,7 @@ pipeline {
         git(
           url: 'https://github.com/rathishvarathan/EY-Assessment.git',
           branch: 'main',
-          credentialsId: 'github-creds'
+          credentialsId: 'git-rathish'
         )
       }
     }
