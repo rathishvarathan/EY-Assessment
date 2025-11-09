@@ -20,7 +20,7 @@ pipeline {
 
     stage('GCP Auth') {
       steps {
-        withCredentials([file(credentialsId: "${GCP_CRED_ID}", variable: 'GOOGLE_KEY')]) {
+        withCredentials([file(credentialsId: "${GCP_CRED_ID}", variable: 'test-k8s')]) {
           sh """
             gcloud auth activate-service-account --key-file=$GOOGLE_KEY
             gcloud config set project $PROJECT
