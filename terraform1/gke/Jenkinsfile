@@ -1,14 +1,15 @@
 pipeline {
   agent any
+
   environment {
-    PROJECT    = "sinuous-origin-477316-k7"
-    ZONE       = "us-central1-a"
-    CLUSTER    = "gke-demo-cluster"
+    PROJECT          = "sinuous-origin-477316-k7"
+    ZONE             = "us-central1-a"
+    CLUSTER          = "gke-demo-cluster"
     DEPLOYMENT_BLUE  = "nginx-blue"
     DEPLOYMENT_GREEN = "nginx-green"
-    SERVICE   = "nginx-service"
-    IMAGE     = "nginx:1.25.3"
-    GCP_CRED_ID = "test-k8s"
+    SERVICE          = "nginx-service-ey"
+    IMAGE            = "nginx:1.25.3"
+    GCP_CRED_ID      = "test-k8s"
   }
 
   stages {
@@ -52,9 +53,16 @@ pipeline {
       }
     }
 
-    stage('Scale Down Blue') {
+    stage('Scale Down Blue (if exists)') {
       steps {
-        sh "kubectl scale deployment/${DEPLOYMENT_BLUE} --replicas=0"
+        sh """
+        if kubectl get deployment/${DEPLOYMENT_BLUE} > /dev/null 2>&1; then
+          echo "Scaling down ${DEPLOYMENT_BLUE}..."
+          kubectl scale deployment/${DEPLOYMENT_BLUE} --replicas=0
+        else
+          echo "No blue deployment found. Skipping scale down."
+        fi
+        """
       }
     }
   }
@@ -65,8 +73,9 @@ pipeline {
     }
     failure {
       echo "Deployment failed. Rolling back to blue."
-      sh "kubectl patch service ${SERVICE} -p '{\"spec\":{\"selector\":{\"app\":\"nginx\",\"version\":\"blue\"}}}'"
+      sh """
+      kubectl patch service ${SERVICE} -p '{"spec":{"selector":{"app":"nginx","version":"blue"}}}'
+      """
     }
   }
 }
-
