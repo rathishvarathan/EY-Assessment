@@ -14,9 +14,11 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git 'https://github.com/rathishvarathan/EY-Assessment.git'
-        branch: 'main',
-        credentialsId: 'git-rathish'
+        git(
+          url: 'https://github.com/rathishvarathan/EY-Assessment.git',
+          branch: 'main',
+          credentialsId: 'github-creds'
+        )
       }
     }
 
