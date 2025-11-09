@@ -8,7 +8,7 @@ pipeline {
     DEPLOYMENT_GREEN = "nginx-green"
     SERVICE   = "nginx-service"
     IMAGE     = "nginx:1.25.3"
-    GCP_CRED_ID = "gcp-key"
+    GCP_CRED_ID = "test-k8s"
   }
 
   stages {
