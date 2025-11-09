@@ -1,0 +1,68 @@
+pipeline {
+  agent any
+  environment {
+    PROJECT    = "sinuous-origin-477316-k7"
+    ZONE       = "us-central1-a"
+    CLUSTER    = "gke-demo-cluster"
+    DEPLOYMENT_BLUE  = "nginx-blue"
+    DEPLOYMENT_GREEN = "nginx-green"
+    SERVICE   = "nginx-service"
+    IMAGE     = "nginx:1.25.3"
+    GCP_CRED_ID = "gcp-key"
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git 'https://github.com/<your-username>/<your-repo>.git'
+      }
+    }
+
+    stage('GCP Auth') {
+      steps {
+        withCredentials([file(credentialsId: "${GCP_CRED_ID}", variable: 'GOOGLE_KEY')]) {
+          sh """
+            gcloud auth activate-service-account --key-file=$GOOGLE_KEY
+            gcloud config set project $PROJECT
+            gcloud container clusters get-credentials $CLUSTER --zone $ZONE --project $PROJECT
+          """
+        }
+      }
+    }
+
+    stage('Deploy Green') {
+      steps {
+        sh """
+          kubectl apply -f k8s/deployment-green.yaml
+          kubectl scale deployment/${DEPLOYMENT_GREEN} --replicas=2
+          kubectl rollout status deployment/${DEPLOYMENT_GREEN}
+        """
+      }
+    }
+
+    stage('Switch Traffic to Green') {
+      steps {
+        sh """
+          kubectl patch service ${SERVICE} -p '{"spec":{"selector":{"app":"nginx","version":"green"}}}'
+        """
+      }
+    }
+
+    stage('Scale Down Blue') {
+      steps {
+        sh "kubectl scale deployment/${DEPLOYMENT_BLUE} --replicas=0"
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "✅ Blue-Green Deployment Successful"
+    }
+    failure {
+      echo "❌ Deployment failed. Rolling back to blue."
+      sh "kubectl patch service ${SERVICE} -p '{\"spec\":{\"selector\":{\"app\":\"nginx\",\"version\":\"blue\"}}}'"
+    }
+  }
+}
+
